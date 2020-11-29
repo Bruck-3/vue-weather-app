@@ -13,13 +13,9 @@
           </v-form>
 
           <div v-if="showDetails">
-            <v-img
-              max-height="200"
-              max-width="300"
-              src="../assets/images/day.svg"
-            ></v-img>
+            <v-img :src="image"></v-img>
             <div class="text-center">
-              <v-icon class="icon-thing">mdi-face</v-icon>
+              <v-icon size="50">mdi-cloud</v-icon>
             </div>
 
             <p class="text-center text-h6">{{ weatherDetails.cityName }}</p>
@@ -43,6 +39,7 @@ export default {
       input: null,
       showDetails: false,
       image: '',
+      icon: '',
       weatherDetails: {
         cityName: '',
         weatherCondition: '',
@@ -63,10 +60,11 @@ export default {
       this.$axios
         .get(base + `apikey=${this.apiKey}&q=${location}`)
         .then((response) => {
-          if (response.data[0]) {
+          const cityResponse = response.data[0]
+          if (cityResponse) {
             this.weatherDetails.cityName =
-              response.data[0].AdministrativeArea.EnglishName
-            this.getCityWeather(response.data[0].Key)
+              cityResponse.AdministrativeArea.EnglishName
+            this.getCityWeather(cityResponse.Key)
             this.input = null
           } else {
             console.log("Couldn't find The city You are looking for")
@@ -81,14 +79,16 @@ export default {
       this.$axios
         .get(base + `apikey=${this.apiKey}`)
         .then((response) => {
-          if (response.data[0].IsDayLight) {
-            this.img = '../assets/images/day.svg'
-          } else {
-            this.img = '../assets/images/night.svg'
+          const cityWeather = response.data[0]
+
+          if (cityWeather.IsDaylight == true) {
+            this.image = 'day.svg'
+          } else if (!cityWeather.IsDaylight) {
+            this.image = 'night.svg'
           }
-          this.weatherDetails.weatherCondition = response.data[0].IconPhrase
-          this.weatherDetails.temperature =
-            response.data[0].Temperature.UnitType
+          this.i
+          this.weatherDetails.weatherCondition = cityWeather.IconPhrase
+          this.weatherDetails.temperature = cityWeather.Temperature.UnitType
           this.showDetails = true
         })
         .catch((error) => {
