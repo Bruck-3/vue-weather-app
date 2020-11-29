@@ -13,7 +13,11 @@
           </v-form>
 
           <div v-if="showDetails">
-            <v-img :src="image"></v-img>
+            <v-img
+              max-height="200"
+              max-width="300"
+              src="../assets/images/day.svg"
+            ></v-img>
             <div class="text-center">
               <v-icon class="icon-thing">mdi-face</v-icon>
             </div>
@@ -38,7 +42,7 @@ export default {
     return {
       input: null,
       showDetails: false,
-      image: 'https://via.placeholder.com/300x200',
+      image: '',
       weatherDetails: {
         cityName: '',
         weatherCondition: '',
@@ -78,7 +82,9 @@ export default {
         .get(base + `apikey=${this.apiKey}`)
         .then((response) => {
           if (response.data[0].IsDayLight) {
+            this.img = '../assets/images/day.svg'
           } else {
+            this.img = '../assets/images/night.svg'
           }
           this.weatherDetails.weatherCondition = response.data[0].IconPhrase
           this.weatherDetails.temperature =
